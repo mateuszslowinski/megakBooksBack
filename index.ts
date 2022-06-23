@@ -3,6 +3,7 @@ import cors from 'cors';
 import "express-async-errors";
 import { handleError } from "./uttils/errors";
 import rateLimit from "express-rate-limit";
+import {bookRouter} from "./routes/book.router";
 
 
 const app = express();
@@ -16,6 +17,9 @@ app.use(rateLimit({
     windowMs: 5 * 60 * 1000,
     max: 100,
 }));
+
+
+app.use('/books',bookRouter);
 
 app.use(handleError);
 
