@@ -1,6 +1,7 @@
 import {BookRecord} from "../records/book.record";
+import {BookEntity} from "../types";
 
-const defaultObj = {
+ const defaultObj:BookEntity = {
     id: 'sdadada',
     title: 'Nowa czesc',
     desc: "opis ten powstał by pokazac czy mi to w wogole zadziala albo czy tez nie",
@@ -10,7 +11,13 @@ const defaultObj = {
     species: 'dramat',
     pages: 400,
 }
-
+const generateStringLength = (count: number): string => {
+    let char = '';
+    while (char.length < count) {
+        char += 'a';
+    }
+    return char;
+};
 
 test('Can build BookRecord', () => {
     const book = new BookRecord(defaultObj);
@@ -36,33 +43,34 @@ test('Validates invalid title', () => {
 test('Validates invalid desc', () => {
     expect(()=> new BookRecord({
         ...defaultObj,
-        desc: '',
-    })).toThrow('Opis nie może być pusty, ani większy niż 1000 znakóws')
+        desc: generateStringLength(2001),
+    })).toThrow('Opis nie może być pusty, ani większy niż 2000 znakóws')
 });
 
 test('Validates invalid author', () => {
     expect(()=> new BookRecord({
         ...defaultObj,
-        author: "",
+        author: generateStringLength(101),
     })).toThrow('Imię oraz nazwisko autora nie może być puste, ani być dłuższe niż 100 znaków')
 });
 
 test('Validates invalid rating', () => {
     expect(()=> new BookRecord({
         ...defaultObj,
-        rating:0,
+        rating:10.1,
     })).toThrow('Ocena nie może być mniejsza niż 0 lub większa niż 10')
 });
+
 test('Validates invalid publisher', () => {
     expect(()=> new BookRecord({
         ...defaultObj,
-        publisher: 'adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus turpis in eu mi bibendum neque egestas congue quisque egestas diam in arcu cursus euismod quis viverra nibh cras pulvinar mattis nunc sed blandit libero volutpat sed cras ornare arcu dui vivamus arcu felis bibendum ut tristique et egestas quis ipsum suspendisse ultrices gravida dictum fusce ut placerat orci nulla pellentesque dignissim enim sit amet venenatis urna cursus eget nunc scelerisque viverra mauris in aliquam sem fringilla ut morbi tincidunt augue interdum velit euismod.',
+        publisher: generateStringLength(101),
     })).toThrow('Nazwa wydawacy nie może być pusta, ani większa niż 100 znaków')
 });
 
 test('Validates invalid species', () => {
     expect(()=> new BookRecord({
         ...defaultObj,
-        species: 'adipiscing vitae proin sagittisswacw.',
+        species: generateStringLength(37),
     })).toThrow('atunek literacki nie może być pusty, ani większa niż 36 znaków')
 });

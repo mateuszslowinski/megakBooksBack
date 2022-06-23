@@ -1,6 +1,11 @@
-import {BookEntity} from "../types";
+import {BookEntity, NewBookEntity} from "../types";
 import {ValidationError} from "../uttils/errors";
+import {pool} from "../uttils/db";
+import {FieldPacket} from "mysql2";
+import {v4 as uuid} from 'uuid';
 
+
+type BookRecordResults = [BookEntity[], FieldPacket[]];
 
 export class BookRecord implements BookEntity {
     id: string;
@@ -13,7 +18,7 @@ export class BookRecord implements BookEntity {
     pages: number;
 
 
-    constructor(obj: BookEntity) {
+    constructor(obj: NewBookEntity) {
         this.id = obj.id;
         this.title = obj.title;
         this.author = obj.author;
@@ -34,8 +39,8 @@ export class BookRecord implements BookEntity {
         if (!obj.rating || obj.rating > 10 || obj.rating < 0) {
             throw new ValidationError("Ocena nie może być mniejsza niż 0 lub większa niż 10");
         }
-        if (!obj.desc || obj.desc.length > 1000) {
-            throw new ValidationError("Opis nie może być pusty, ani większy niż 1000 znakóws");
+        if (!obj.desc || obj.desc.length > 2000) {
+            throw new ValidationError("Opis nie może być pusty, ani większy niż 2000 znakóws");
         }
         if (!obj.publisher || obj.publisher.length > 100) {
             throw new ValidationError("Nazwa wydawacy nie może być pusta, ani większa niż 100 znaków");
@@ -48,4 +53,43 @@ export class BookRecord implements BookEntity {
         }
     }
 
+    static async getOne(id: string): Promise<BookRecord> | null {
+        const [results] = await pool.execute("SELECT * FROM `books` WHERE id =:id", {
+            id,
+        }) as BookRecordResults;
+
+        return results.length === 0 ? null : new BookRecord(results[0]);
+
+    }
+
+    static async findAll(): Promise<BookRecord[]> {
+
+        const [results] = await pool.execute("SELECT * FROM `books`") as BookRecordResults;
+        return results.map(obj => new BookRecord(obj));
+    }
+
+    async insert(): Promise<string> {
+        if (!this.id) {
+            this.id = uuid();
+        } else {
+            throw new ValidationError('Cannot insert something that is already inserted');
+        }
+        await pool.execute('INSERT INTO `books`(`id`,`title`,`author`,`rating`,`desc`,`publisher`,`species`,`pages`) VALUES (:id,:title,:author,:rating,:desc,:publisher,:species,:pages)', this)
+
+        return this.id;
+    }
+
+    async remove(): Promise<void> {
+        if (!this.id) {
+            throw new ValidationError('This book does not exist')
+        }
+
+        await pool.execute('DELETE FROM `books` WHERE `id` =:id', {
+            id: this.id,
+        })
+    }
+
+    async update(): Promise<void> {
+        await pool.execute('UPDATE `books` SET `title`=:title, `author` = :author, `rating` = :rating, `desc`=:desc, `publisher`=:publisher, `species`=:species, `pages`=:pages WHERE `id`=:id', this);
+    }
 }

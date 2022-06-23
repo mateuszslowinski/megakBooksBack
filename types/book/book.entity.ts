@@ -1,3 +1,7 @@
+export interface NewBookEntity extends Omit<BookEntity, "id"> {
+    id?: string;
+}
+
 export interface SimpleBookEntity {
     id: string;
     title: string;
