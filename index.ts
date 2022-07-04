@@ -11,7 +11,7 @@ const app = express();
 app.use(cors({
     origin: 'http://localhost:3000',
 }));
-app.use(json());
+app.use(express.json());
 
 app.use(rateLimit({
     windowMs: 5 * 60 * 1000,
