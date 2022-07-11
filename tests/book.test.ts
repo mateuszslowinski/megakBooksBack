@@ -3,17 +3,17 @@ import {BookRecord} from "../records/book.record";
 
 const defaultObj = {
     title: 'Nowa  czesc',
-    desc: "opis ten powstał by pokazac czy mi to w wogole zadziala albo czy tez nie",
-    author: "jan II nowak",
-    rating: 5.7,
-    publisher: 'Jakis tam',
+    desc: "opis ten powstał by przeknać się czy test ten przejdzie",
+    author: "jan nowak",
+    rating: 6,
+    publisher: 'Nieznany',
     species: 'Dramat',
     pages: 400,
 }
 
 
 test('BookRecord.insert inserts new book to database', async () => {
-    const book = new BookRecord(defaultObj,);
+    const book = new BookRecord(defaultObj);
     await book.insert();
 
     const foundBook = await BookRecord.getOne(book.id);
@@ -48,10 +48,21 @@ test('BookRecord.findAll returns array of all books from database', async () => 
 
 
 test('BookRecord.update edit already exist book in database.', async () => {
-    const book = await BookRecord.getOne('test');
+    const book = await BookRecord.getOne('test2');
     book.author = 'oleg twardy';
 
     await book.update();
     expect(book.author).toBe('oleg twardy');
 })
 
+test('BookRecord.findByRatingIncrease returns array books with increasing rating', async () => {
+    const books = await BookRecord.findByRatingIncrease();
+
+    expect(books[0].rating >= books[1].rating).toBeTruthy();
+})
+
+test('BookRecord.findByRatingDecrease returns array books with decreasing rating', async () => {
+    const books = await BookRecord.findByRatingDecrease();
+
+    expect(books[0].rating <= books[1].rating).toBeTruthy();
+})

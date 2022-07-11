@@ -83,7 +83,6 @@ export class BookRecord implements BookEntity {
         if (!this.id) {
             throw new ValidationError('This book does not exist')
         }
-
         await pool.execute('DELETE FROM `books` WHERE `id` =:id', {
             id: this.id,
         })
@@ -91,5 +90,27 @@ export class BookRecord implements BookEntity {
 
     async update(): Promise<void> {
         await pool.execute('UPDATE `books` SET `title`=:title, `author` = :author, `rating` = :rating, `desc`=:desc, `publisher`=:publisher, `species`=:species, `pages`=:pages WHERE `id`=:id', this);
+    }
+
+    static async findBySearch(param: string): Promise<BookEntity[] | null> {
+        const [results] = await pool.execute("SELECT * FROM `books` WHERE `title` LIKE:param", {
+            param,
+        }) as BookRecordResults
+        return results.map(obj => new BookRecord(obj));
+    }
+
+    static async findByRatingIncrease(): Promise<BookRecord[]> {
+        const [results] = await pool.execute('SELECT * FROM `books` ORDER BY `rating` DESC') as BookRecordResults
+        return results.map(obj => new BookRecord(obj));
+    }
+
+    static async findByRatingDecrease(): Promise<BookRecord[]> {
+        const [results] = await pool.execute('SELECT * FROM `books` ORDER BY `rating`') as BookRecordResults
+        return results.map(obj => new BookRecord(obj));
+    }
+
+    static async titleAlphabetically():Promise<BookRecord[]> {
+        const [results] = await pool.execute('SELECT * FROM `books` ORDER BY `title`') as BookRecordResults
+        return results.map(obj => new BookRecord(obj));
     }
 }

@@ -6,7 +6,7 @@ import {BookEntity} from "../types";
     title: 'Nowa czesc',
     desc: "opis ten powstał by pokazac czy mi to w wogole zadziala albo czy tez nie",
     author: "jan nowak",
-    rating: 6.7,
+    rating: 5,
     publisher: 'jakis tam',
     species: 'dramat',
     pages: 400,
@@ -25,7 +25,7 @@ test('Can build BookRecord', () => {
     expect(book.id).toBe('sdadada');
     expect(book.title).toBe('Nowa czesc');
     expect(book.desc).toBe('opis ten powstał by pokazac czy mi to w wogole zadziala albo czy tez nie');
-    expect(book.rating).toBe(6.7);
+    expect(book.rating).toBe(5);
     expect(book.pages).toBe(400);
     expect(book.author).toBe('jan nowak');
     expect(book.publisher).toBe('jakis tam');
