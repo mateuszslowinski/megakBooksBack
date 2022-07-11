@@ -1,9 +1,11 @@
-import express, {json} from "express";
+import express from "express";
 import cors from 'cors';
 import "express-async-errors";
-import { handleError } from "./uttils/errors";
+import {handleError} from "./uttils/errors";
 import rateLimit from "express-rate-limit";
 import {bookRouter} from "./routes/book.router";
+import {selectRouter} from "./routes/select.router";
+import {searchRouter} from "./routes/search.router";
 
 
 const app = express();
@@ -19,8 +21,9 @@ app.use(rateLimit({
 }));
 
 
-app.use('/books',bookRouter);
-
+app.use('/books', bookRouter);
+app.use('/select', selectRouter);
+app.use('/search', searchRouter);
 app.use(handleError);
 
 
