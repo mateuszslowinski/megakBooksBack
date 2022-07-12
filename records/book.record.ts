@@ -20,7 +20,7 @@ export class BookRecord implements BookEntity {
 
     constructor(obj: NewBookEntity) {
         this.id = obj.id;
-        this.title = obj.title;
+        this.title = obj.title.trim();
         this.author = obj.author;
         this.rating = obj.rating;
         this.desc = obj.desc;

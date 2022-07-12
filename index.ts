@@ -7,7 +7,6 @@ import {bookRouter} from "./routes/book.router";
 import {selectRouter} from "./routes/select.router";
 import {searchRouter} from "./routes/search.router";
 
-
 const app = express();
 
 app.use(cors({
@@ -20,12 +19,10 @@ app.use(rateLimit({
     max: 100,
 }));
 
-
 app.use('/books', bookRouter);
 app.use('/select', selectRouter);
 app.use('/search', searchRouter);
 app.use(handleError);
-
 
 app.listen(3001, '0.0.0.0', () => {
     console.log('Listing on http://localhost:3001')
