@@ -6,11 +6,12 @@ import rateLimit from "express-rate-limit";
 import {bookRouter} from "./routes/book.router";
 import {selectRouter} from "./routes/select.router";
 import {searchRouter} from "./routes/search.router";
+import {config} from "./config/config";
 
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: config.corsOrigin,
 }));
 app.use(express.json());
 
