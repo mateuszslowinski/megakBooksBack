@@ -22,13 +22,13 @@ test('BookRecord.insert inserts new book to database', async () => {
 });
 
 
-test('BookRecord returns data from database for one enrty', async () => {
-    const book = await BookRecord.getOne('abc');
-
-    expect(book).toBeDefined();
-    expect(book.id).toBe('abc');
-
-});
+// test('BookRecord returns data from database for one enrty', async () => {
+//     const book = await BookRecord.getOne('abc');
+//
+//     expect(book).toBeDefined();
+//     expect(book.id).toBe('abc');
+//
+// });
 test('BookRecord.findAll returns array of all books from database', async () => {
     const books = await BookRecord.findAll();
 
@@ -47,13 +47,13 @@ test('BookRecord.findAll returns array of all books from database', async () => 
 // });
 
 
-test('BookRecord.update edit already exist book in database.', async () => {
-    const book = await BookRecord.getOne('test2');
-    book.author = 'oleg twardy';
-
-    await book.update();
-    expect(book.author).toBe('oleg twardy');
-})
+// test('BookRecord.update edit already exist book in database.', async () => {
+//     const book = await BookRecord.getOne('test2');
+//     book.author = 'oleg twardy';
+//
+//     await book.update();
+//     expect(book.author).toBe('oleg twardy');
+// })
 
 test('BookRecord.findByRatingIncrease returns array books with increasing rating', async () => {
     const books = await BookRecord.findByRatingIncrease();
