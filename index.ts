@@ -7,6 +7,7 @@ import {bookRouter} from "./routes/book.router";
 import {selectRouter} from "./routes/select.router";
 import {searchRouter} from "./routes/search.router";
 import {config} from "./config/config";
+import {userRouter} from "./routes/user.router";
 
 const app = express();
 
@@ -20,9 +21,10 @@ app.use(rateLimit({
     max: 100,
 }));
 
-app.use('/books', bookRouter);
-app.use('/select', selectRouter);
-app.use('/search', searchRouter);
+app.use('/api/books', bookRouter);
+app.use('/api/select', selectRouter);
+app.use('/api/search', searchRouter);
+app.use('/api/user',userRouter)
 app.use(handleError);
 
 app.listen(3001, '0.0.0.0', () => {
