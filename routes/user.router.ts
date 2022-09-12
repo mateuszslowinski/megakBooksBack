@@ -10,6 +10,14 @@ userRouter
         const users = await UserRecord.getAllUser();
         res.status(200).json(users)
     })
+    .get('/:token', async (req: Request, res: Response) => {
+        const user = await UserRecord.getUserByToken(req.params.token);
+        res.status(201).json({
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin
+        })
+    })
     .post('/register', async (req: Request, res: Response) => {
         const {email} = req.body;
         const isUserExist = await UserRecord.getUser(email);
@@ -41,7 +49,7 @@ userRouter
             res.status(201).json({
                 name: user.name,
                 email: user.email,
-               token:user.token,
+                token: user.token,
                 isAdmin: user.isAdmin
             })
         } else {
