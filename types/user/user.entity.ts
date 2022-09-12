@@ -2,27 +2,24 @@ export interface NewUserEntity extends Omit<UserEntity, "id"> {
     id?: string;
 }
 
-export interface UserEntity {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-    token:string;
-    isAdmin: boolean;
-    createdAt: Date;
+export interface UserResponse {
+    name: string,
+    email: string,
+    isAdmin: boolean,
+}
+export interface LoginUserResponse extends UserResponse{
+    token: string;
 }
 
+export interface UserEntity extends LoginUserResponse{
+    id: string;
+    password: string;
+    createdAt: Date;
+}
 
 export interface LoginUser {
     email: string;
     password: string;
-}
-
-export interface LoginUserResponse {
-    name: string,
-    email: string,
-    isAdmin: boolean,
-    token: string;
 }
 
 export interface LogoutUserResponse {
