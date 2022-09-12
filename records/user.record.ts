@@ -50,6 +50,13 @@ export class UserRecord implements UserEntity {
         return results.map(user => new UserRecord(user));
     }
 
+    static async getUserByToken(token:string) {
+        const [result] = await pool.execute("SELECT * FROM `users` WHERE token=:token", {
+            token,
+        }) as UserRecordResults;
+        return result.length === 0 ? null : new UserRecord(result[0]);
+    }
+
     async insert(): Promise<string> {
         this.isAdmin = false;
         const salt = await bcrypt.genSalt(10);
@@ -74,5 +81,4 @@ export class UserRecord implements UserEntity {
             id: this.id,
         })
     }
-
 }
