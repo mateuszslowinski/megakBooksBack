@@ -1,10 +1,11 @@
 import {FieldPacket} from "mysql2";
-import {NewUserEntity, UserEntity} from "../types/user";
+import {NewUserEntity, UserEntity} from "../types";
 import {pool} from "../uttils/db";
 import {validateEmail, validateLength} from "../uttils/validation";
 import {ValidationError} from "../uttils/errors";
 import {v4 as uuid} from "uuid";
 import bcrypt from "bcrypt";
+import {generateToken} from "../uttils/token";
 
 type UserRecordResults = [UserEntity[], FieldPacket[]];
 
@@ -13,6 +14,7 @@ export class UserRecord implements UserEntity {
     name: string;
     email: string;
     password: string;
+    token: string;
     isAdmin: boolean;
     createdAt: Date;
 
@@ -31,6 +33,7 @@ export class UserRecord implements UserEntity {
         this.name = obj.name;
         this.email = obj.email;
         this.password = obj.password;
+        this.token= obj.token;
         this.isAdmin = obj.isAdmin;
         this.createdAt = obj.createdAt;
     }
@@ -51,14 +54,15 @@ export class UserRecord implements UserEntity {
         this.isAdmin = false;
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
+        this.token = generateToken(this.id);
 
         if (!this.id) {
             this.id = uuid();
         } else {
             throw new ValidationError('Nie można dodać coś, co już istnieje');
         }
-        await pool.execute('INSERT INTO `users`(`id`,`name`,`email`, `password`,`isAdmin`) VALUES' +
-            ' (:id,:name,:email,:password,:isAdmin)', this)
+        await pool.execute('INSERT INTO `users`(`id`,`name`,`email`, `password`,`token`,`isAdmin`) VALUES' +
+            ' (:id,:name,:email,:password,:token,:isAdmin)', this)
         return this.id;
     }
 

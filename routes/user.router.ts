@@ -38,10 +38,11 @@ userRouter
             throw new ValidationError('Podane hasło jest nie prawidłowe.')
         }
         if (user && isCorrectPassword) {
-            res.status(200).json({
+            res.status(201).json({
                 name: user.name,
                 email: user.email,
-                isAdmin: user.isAdmin,
+               token:user.token,
+                isAdmin: user.isAdmin
             })
         } else {
             throw new ValidationError('Nie udana próba zalogowania')
