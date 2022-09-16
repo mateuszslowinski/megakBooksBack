@@ -3,7 +3,6 @@ import {BookRecord} from "../records/book.record";
 
 export const bookRouter = Router();
 
-
 bookRouter
     .get('/', async (req: Request, res: Response) => {
         const books = await BookRecord.findAll();
@@ -21,7 +20,6 @@ bookRouter
         res.json(book);
     })
     .patch('/:id', async (req: Request, res: Response) => {
-
         let book = await BookRecord.getOne(req.params.id);
         book = Object.assign(book, req.body)
 

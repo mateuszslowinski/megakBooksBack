@@ -1,10 +1,11 @@
 import {FieldPacket} from "mysql2";
-import {NewUserEntity, UserEntity} from "../types/user";
-import {pool} from "../uttils/db";
-import {validateEmail, validateLength} from "../uttils/validation";
-import {ValidationError} from "../uttils/errors";
 import {v4 as uuid} from "uuid";
 import bcrypt from "bcrypt";
+import {pool} from "../uttils/db";
+import {generateToken} from "../uttils/token";
+import {validateEmail, validateLength} from "../uttils/validation";
+import {ValidationError} from "../uttils/errors";
+import {NewUserEntity, UserEntity} from "../types";
 
 type UserRecordResults = [UserEntity[], FieldPacket[]];
 
@@ -13,7 +14,8 @@ export class UserRecord implements UserEntity {
     name: string;
     email: string;
     password: string;
-    isAdmin: boolean;
+    token: string;
+    isAdmin: string;
     createdAt: Date;
 
     constructor(obj: NewUserEntity) {
@@ -31,6 +33,7 @@ export class UserRecord implements UserEntity {
         this.name = obj.name;
         this.email = obj.email;
         this.password = obj.password;
+        this.token = obj.token;
         this.isAdmin = obj.isAdmin;
         this.createdAt = obj.createdAt;
     }
@@ -47,18 +50,26 @@ export class UserRecord implements UserEntity {
         return results.map(user => new UserRecord(user));
     }
 
+    static async getUserByToken(token: string) {
+        const [result] = await pool.execute("SELECT * FROM `users` WHERE token=:token", {
+            token,
+        }) as UserRecordResults;
+        return result.length === 0 ? null : new UserRecord(result[0]);
+    }
+
     async insert(): Promise<string> {
-        this.isAdmin = false;
+        this.isAdmin = '0';
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
+        this.token = generateToken(this.id);
 
         if (!this.id) {
             this.id = uuid();
         } else {
             throw new ValidationError('Nie można dodać coś, co już istnieje');
         }
-        await pool.execute('INSERT INTO `users`(`id`,`name`,`email`, `password`,`isAdmin`) VALUES' +
-            ' (:id,:name,:email,:password,:isAdmin)', this)
+        await pool.execute('INSERT INTO `users`(`id`,`name`,`email`, `password`,`token`,`isAdmin`) VALUES' +
+            ' (:id,:name,:email,:password,:token,:isAdmin)', this)
         return this.id;
     }
 
@@ -70,5 +81,4 @@ export class UserRecord implements UserEntity {
             id: this.id,
         })
     }
-
 }
