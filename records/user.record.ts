@@ -1,11 +1,11 @@
 import {FieldPacket} from "mysql2";
-import {NewUserEntity, UserEntity} from "../types";
-import {pool} from "../uttils/db";
-import {validateEmail, validateLength} from "../uttils/validation";
-import {ValidationError} from "../uttils/errors";
 import {v4 as uuid} from "uuid";
 import bcrypt from "bcrypt";
+import {pool} from "../uttils/db";
 import {generateToken} from "../uttils/token";
+import {validateEmail, validateLength} from "../uttils/validation";
+import {ValidationError} from "../uttils/errors";
+import {NewUserEntity, UserEntity} from "../types";
 
 type UserRecordResults = [UserEntity[], FieldPacket[]];
 
@@ -15,7 +15,7 @@ export class UserRecord implements UserEntity {
     email: string;
     password: string;
     token: string;
-    isAdmin: boolean;
+    isAdmin: string;
     createdAt: Date;
 
     constructor(obj: NewUserEntity) {
@@ -33,7 +33,7 @@ export class UserRecord implements UserEntity {
         this.name = obj.name;
         this.email = obj.email;
         this.password = obj.password;
-        this.token= obj.token;
+        this.token = obj.token;
         this.isAdmin = obj.isAdmin;
         this.createdAt = obj.createdAt;
     }
@@ -50,7 +50,7 @@ export class UserRecord implements UserEntity {
         return results.map(user => new UserRecord(user));
     }
 
-    static async getUserByToken(token:string) {
+    static async getUserByToken(token: string) {
         const [result] = await pool.execute("SELECT * FROM `users` WHERE token=:token", {
             token,
         }) as UserRecordResults;
@@ -58,7 +58,7 @@ export class UserRecord implements UserEntity {
     }
 
     async insert(): Promise<string> {
-        this.isAdmin = false;
+        this.isAdmin = '0';
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
         this.token = generateToken(this.id);

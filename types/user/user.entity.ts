@@ -3,15 +3,17 @@ export interface NewUserEntity extends Omit<UserEntity, "id"> {
 }
 
 export interface UserResponse {
+    id: string,
     name: string,
     email: string,
-    isAdmin: boolean,
+    isAdmin: string,
 }
-export interface LoginUserResponse extends UserResponse{
+
+export interface LoginUserResponse extends UserResponse {
     token: string;
 }
 
-export interface UserEntity extends LoginUserResponse{
+export interface UserEntity extends LoginUserResponse {
     id: string;
     password: string;
     createdAt: Date;
@@ -22,7 +24,3 @@ export interface LoginUser {
     password: string;
 }
 
-export interface LogoutUserResponse {
-    ok?: string;
-    error?: string;
-}
