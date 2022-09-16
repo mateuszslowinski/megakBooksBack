@@ -13,6 +13,7 @@ userRouter
     .get('/:token', async (req: Request, res: Response) => {
         const user = await UserRecord.getUserByToken(req.params.token);
         res.status(201).json({
+            id: user.id,
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin
